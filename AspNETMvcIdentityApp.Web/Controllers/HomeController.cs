@@ -1,4 +1,6 @@
 ﻿using AspNETMvcIdentityApp.Web.Models;
+using AspNETMvcIdentityApp.Web.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,10 +9,12 @@ namespace AspNETMvcIdentityApp.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager)
         {
             _logger = logger;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -25,6 +29,30 @@ namespace AspNETMvcIdentityApp.Web.Controllers
 
         public IActionResult SignUp()
         {
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignUp(SignUpViewModel request)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var identityResult = await _userManager.CreateAsync(new AppUser() { UserName = request.UserName, Email = request.Email, PhoneNumber = request.Phone }, request.PasswordConfirm);
+
+            if (identityResult.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Üyelik kayıt işlemi başarı ile gerçekleşmiştir.";
+                return RedirectToAction(nameof(HomeController.SignUp));
+            }
+
+            foreach (IdentityError item in identityResult.Errors)
+            {
+                ModelState.AddModelError(string.Empty, item.Description);
+            }
 
             return View();
         }
