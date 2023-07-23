@@ -1,11 +1,12 @@
-﻿using AspNETMvcIdentityApp.Web.Models;
+﻿using AspNETMvcIdentityApp.Web.CustomValidations;
+using AspNETMvcIdentityApp.Web.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AspNETMvcIdentityApp.Web.Extensions
 {
     public static class StartupExtensions
     {
-        public static void AddIdentityWithExr(this IServiceCollection services)
+        public static void AddIdentityWithExt(this IServiceCollection services)
         {
             services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -17,7 +18,7 @@ namespace AspNETMvcIdentityApp.Web.Extensions
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = false;
-            }).AddEntityFrameworkStores<AppDbContext>();
+            }).AddPasswordValidator<PasswordValidator>().AddEntityFrameworkStores<AppDbContext>();
         }
     }
 }

@@ -1,3 +1,4 @@
+using AspNETMvcIdentityApp.Web.Extensions;
 using AspNETMvcIdentityApp.Web.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,17 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCon"));
 });
 
-builder.Services.AddIdentity<AppUser, AppRole>(options =>
-{
-    options.User.RequireUniqueEmail = true;
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnoprstuvwxyz1234567890_";
-
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireDigit = false;
-}).AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentityWithExt();
 
 var app = builder.Build();
 
